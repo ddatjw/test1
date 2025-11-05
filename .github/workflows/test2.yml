@@ -1,14 +1,14 @@
-name: First #Define Workflow name
-on: workflow_dispatch # Define events
+name: Print_info
+on: [push, workflow_dispatch]
 jobs:
-  first-job: # job name, up to you
-    runs-on: ubuntu-latest # key name, setting environment
-    steps: # Describe Steps
-      - name: Print greeting
-        run: echo "Hello World!"
-      - name: Multiple Lines
-        run: |
-          echo "Line1"
-          echo "Line2"
-      - name: Print goodbye
-        run: echo "Goodbye!"
+  cond:
+     runs-on: ubuntu-latest
+     steps:
+      - name: Conditional
+        if: ${{github.event_name == 'push' }} 
+        run: echo "This runs on push events only."
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output Github context
+        run: echo "${{ github.repository }}"
