@@ -1,8 +1,14 @@
-name: Python-Test
-on: push
+name: Generate and Upload Artifact
+
+on: 
+  push:
+    branches:
+      - master
+
 jobs:
-  test:
+  generate-file:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -10,23 +16,25 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'  # Specify your desired Python version here
-
-      - name: Run unit tests
-        run: |
-          python -m unittest discover -s . -p "test_*.py"
-
-  deploy:
-    runs-on: ubuntu-latest
-    # needs: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
           python-version: '3.x'
 
-      - name: Run main.py
-        run: python main.py
+      - name: Run create_txt script
+        run: python create_txt.py
+
+      - name: Upload data.txt as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-file
+          path: data.txt
+
+  download-file:
+    needs: generate-file
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: data-file
+      - name: Print data.txt
+        run: cat data.txt
