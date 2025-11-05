@@ -1,40 +1,25 @@
-name: Generate and Upload Artifact
+name: Add Numbers
 
-on: 
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  generate-file:
+  add-numbers:
     runs-on: ubuntu-latest
+
+    env:
+      NUM1: 10  # Workflow 환경 변수 설정
     
     steps:
-      - name: Checkout code
+      - name: Check out code
         uses: actions/checkout@v4
-
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
-      - name: Run create_txt script
-        run: python create_txt.py
-
-      - name: Upload data.txt as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: data-file
-          path: data.txt
-
-  download-file:
-    needs: generate-file
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: data-file
-      - name: Print data.txt
-        run: cat data.txt
+      
+      - name: Run add_numbers.py with environment variables and secrets
+        env:
+          NUM2: ${{ secrets.NUM2 }}  # Secrets에서 NUM2 가져오기
+        run: |
+          python add_numbers.py 
